@@ -36,7 +36,7 @@ describe Inploy::Deploy do
     context "on local update" do
       it "should not restart server if bundle fails" do
         expect_command("bundle install --path ~/.bundle --without development test cucumber").and_return(false)
-        dont_accept_command "touch tmp/restart.txt"
+        dont_accept_command "mkdir -p tmp && touch tmp/restart.txt"
         subject.local_update
       end
     end

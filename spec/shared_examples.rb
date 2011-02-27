@@ -192,7 +192,7 @@ shared_examples_for "local update" do
   end
 
   it "should restart the server" do
-    expect_command "touch tmp/restart.txt"
+    expect_command "mkdir -p tmp && touch tmp/restart.txt"
     subject.local_update
   end
 
@@ -317,7 +317,7 @@ shared_examples_for "local update" do
       rake "test"
     end
     expect_command("rake test").ordered
-    expect_command("touch tmp/restart.txt").ordered
+    expect_command("mkdir -p tmp && touch tmp/restart.txt").ordered
     subject.local_update
   end
 
