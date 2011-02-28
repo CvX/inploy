@@ -148,9 +148,9 @@ shared_examples_for "remote update" do
     subject.remote_update
   end
 
-  it "should not run bundle install if it's on skip_steps" do
+  it "should not run bundle install if install_gems is on skip_steps" do
     subject.environment = "en3"
-    subject.skip_steps = ['bundle_install']
+    subject.skip_steps = ['install_gems']
     dont_accept_command "bundle install --path ~/.bundle  --without development test cucumber"
     subject.local_setup
   end

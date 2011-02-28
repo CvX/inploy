@@ -61,14 +61,16 @@ module Inploy
     end
 
     def bundle_install
-      run bundle_cmd unless skip_step?('bundle_install')
+      run bundle_cmd
     end
 
     def install_gems
+      return if skip_step?('install_gems')
+
       if using_bundler?
         bundle_install
       else
-        rake "gems:install RAILS_ENV=#{environment}" unless skip_step?('install_gems')
+        rake "gems:install RAILS_ENV=#{environment}"
       end
     end
 
