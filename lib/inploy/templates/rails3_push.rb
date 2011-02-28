@@ -35,6 +35,11 @@ module Inploy
       def update_code
       end
 
+      def local_update
+        migrate_database
+        restart_server
+      end
+
       private
 
       def push_code

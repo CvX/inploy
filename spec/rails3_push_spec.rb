@@ -55,5 +55,14 @@ describe Inploy::Deploy do
         subject.update_code
       end
     end
+
+    context "on local update" do
+      it "should run migrations and restart the server" do
+        expect_command("rake db:migrate RAILS_ENV=#{@environment}").ordered
+        expect_command("mkdir -p tmp && touch tmp/restart.txt").ordered 
+        subject.local_update
+      end
+    end
+
   end
 end
