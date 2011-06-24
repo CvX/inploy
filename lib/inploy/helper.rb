@@ -57,7 +57,7 @@ module Inploy
     end
 
     def bundle_cmd
-      "bundle install --path ~/.bundle --without development test cucumber"
+      "bundle install --path #{bundler_path || '~/.bundle'} --without development test cucumber"
     end
 
     def bundle_install
@@ -76,6 +76,14 @@ module Inploy
 
     def update_crontab
       run "whenever --update-crontab #{application} --set 'environment=#{environment}'" if file_exists?("config/schedule.rb") unless skip_step?('update_crontab')
+    end
+
+    def notify_new_relic
+      if file_exists? "vendor/plugins/newrelic_rpm/bin/newrelic_cmd" 
+        run "ruby vendor/plugins/newrelic_rpm/bin/newrelic_cmd deployments"
+      elsif file_exists? "config/newrelic.yml"
+        run "newrelic_cmd deployments"
+      end
     end
   end
 end

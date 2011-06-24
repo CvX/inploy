@@ -312,6 +312,26 @@ shared_examples_for "local update" do
     subject.local_update
   end
 
+  it "should notify new relic rpm if config/newrelic.yml exists" do
+    file_exists "config/newrelic.yml"
+    expect_command("newrelic_cmd deployments")
+    subject.local_update
+  end
+
+  it "should not notify new relic rpm if doesn't exists as plugin neither config/newrelic.yml" do
+    file_doesnt_exists "config/newrelic.yml"
+    file_doesnt_exists "vendor/plugins/newrelic_rpm/bin/newrelic_cmd"
+    dont_accept_command("newrelic_cmd deployments")
+    subject.local_update
+  end
+
+  it "should not notify new relic rpm with the gem command if exists as plugin and config/newrelic.yml, too" do
+    file_exists "config/newrelic.yml"
+    file_exists "vendor/plugins/newrelic_rpm/bin/newrelic_cmd"
+    dont_accept_command("newrelic_cmd deployments")
+    subject.local_update
+  end
+
   it "should execute before_restarting_server hook" do
     subject.before_restarting_server do
       rake "test"
@@ -340,15 +360,29 @@ shared_examples_for "local update" do
     subject.local_update
   end
 
-  it "should compile compass files if the file config/initializers/compass.rb exists" do
-    file_exists "config/initializers/compass.rb"
+  it "should compile compass files if the file config/compass.rb exists" do
+    file_exists "config/compass.rb"
     expect_command "compass compile"
     subject.local_update
   end
 
-  it "should not compile compass files if the file config/initializers/compass.rb doesn't exists" do
-    file_doesnt_exists "config/initializers/compass.rb"
+  it "should not compile compass files if the file config/compass.rb doesn't exists" do
+    file_doesnt_exists "config/compass.rb"
     dont_accept_command "compass compile"
+    subject.local_update
+  end
+
+  it "should restart the delayed job worker if script/delayed_job exist" do
+    subject.environment = "env9"
+    file_exists "script/delayed_job"
+    expect_command "RAILS_ENV=env9 script/delayed_job restart"
+    subject.local_update
+  end
+
+  it "should not restart the delayed job worker if script/delayed_job doesnt exist" do
+    subject.environment = "env9"
+    file_doesnt_exists "script/delayed_job"
+    dont_accept_command "RAILS_ENV=env9 script/delayed_job restart"
     subject.local_update
   end
 end
