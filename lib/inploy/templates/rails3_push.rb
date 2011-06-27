@@ -27,6 +27,8 @@ module Inploy
         command << "cd #{application_path}"
         command << "rake inploy:local:update RAILS_ENV=#{environment} environment=#{environment}#{skip_steps_cmd}"
         remote_run command.join(' && ')
+        
+        callback :after_update
       end
 
       def install_gems

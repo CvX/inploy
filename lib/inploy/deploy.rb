@@ -5,7 +5,7 @@ module Inploy
 
     attr_accessor :repository, :user, :application, :hosts, :path, :app_folder, :ssh_opts, :branch, :environment, :port, :skip_steps, :cache_dirs, :sudo, :login_shell, :bundler_path
 
-    define_callbacks :after_setup, :before_restarting_server
+    define_callbacks :after_setup, :before_restarting_server, :after_update
 
     def initialize
       self.server = :passenger
@@ -54,6 +54,7 @@ module Inploy
 
     def remote_update
       remote_run "cd #{application_path} && #{sudo_if_should}rake inploy:local:update RAILS_ENV=#{environment} environment=#{environment}#{skip_steps_cmd}"
+      callback :after_update
     end
 
     def remote_rake(task)
